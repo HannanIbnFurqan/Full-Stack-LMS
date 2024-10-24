@@ -1,23 +1,21 @@
 import path from 'path';
 import multer from 'multer';
 
+const storage = multer.diskStorage({
+    destination: 'uploads/',
+    filename: (_req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    },
+});
+
 const upload = multer({
-    dest: 'uploads/',
+    storage: storage,
     limits: { fileSize: 50 * 1024 * 1024 },
-    storage: multer.diskStorage({
-        destination: 'uploads/',
-        filename: (_req, file, cb) => {
-            cb(null, file.originalname);
-        },
-    }),
     fileFilter: (_req, file, cb) => {
-        let ext = path.extname(file.originalname);
-        if (ext !== '.jpg' &&
-            ext !== '.jpeg' &&
-            ext !== '.webp' && // Corrected from "webbp" to "webp"
-            ext !== '.png' &&
-            ext !== '.mp4') { // Removed the extra comma
-            cb(new Error(`Unsupported file type! ${ext}`), false);
+        const ext = path.extname(file.originalname).toLowerCase();
+        if (!['.jpg', '.jpeg', '.webp', '.png', '.mp4'].includes(ext)) {
+            cb(new Error('Unsupported file type! Only JPG, JPEG, WEBP, PNG, and MP4 are allowed.'), false);
             return;
         }
         cb(null, true);
