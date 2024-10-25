@@ -4,27 +4,29 @@ import jwt from 'jsonwebtoken'
 const userSchema = mongoose.Schema({
     fullname: {
         type: String,
-        required: [true, 'please enter the name'],
+        required: [true, 'Please enter the name'],
         trim: true,
     },
     email: {
         type: String,
-        required: [true, 'please enter the email'],
+        required: [true, 'Please enter the email'],
         trim: true,
         unique: true
     },
     password: {
         type: String,
-        required: [true, 'please enter the password'],
+        required: [true, 'Please enter the password'],
         trim: true,
         select: false
     },
     avatar: {
         public_id: {
-            type: String
+            type: String,
+            default: '' // Set default empty string for consistency
         },
         secure_url: {
-            type: String
+            type: String,
+            default: '' // Set default empty string for consistency
         }
     },
     role: {
@@ -34,7 +36,7 @@ const userSchema = mongoose.Schema({
     },
     forgotPasswordToken: String,
     forgotPasswordExpiry: Date
-}, { timesTamp: true })
+}, { timestamps: true }); // Corrected timestamps option
 
 
 userSchema.pre('save', async function(next){

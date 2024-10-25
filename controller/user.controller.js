@@ -8,9 +8,10 @@ const cookieOption = {
     secure: true
 
 }
+
 // Register Route
 const register = async (req, res, next) => { 
-    const { fullname, email, password } = req.body;
+    const { fullname, email, password} = req.body;
     
     console.log(fullname, email, password);
 
@@ -23,49 +24,51 @@ const register = async (req, res, next) => {
     if (existUser) {
         return next(new AppError('User already exists'));
     }
-
+     // Set default avatar values
+     const defaultAvatar = {
+        public_id: '',
+        secure_url: ''
+    };
     // Create new user
     const user = await User.create({
         fullname,
         email,
         password,
-        avatar: {
-            public_id: " ",
-            secure_url: " "
-        }
+        avatar: defaultAvatar
     });
 
     if (!user) {
         return next(new AppError('User registration failed, please try again'));
     }
-    // file upload
-    if(req.file){
-        console.log('file details = ',JSON.stringify(req.file))
+      // File upload to Cloudinary
+      console.log('req.file.path = ', req.file)
+
+      if (req.file) {
+        console.log('file details = ', JSON.stringify(req.file));
         try {
-            const result = await cloudinary.v2.uploader(req.file.path,{
-                folder: 'user_avatars',
+            const result = await cloudinary.v2.uploader.upload(req.file.path, {
+                folder: 'uploads',
                 width: 250,
                 height: 250,
                 gravity: 'faces',
                 crop: 'fill'
             });
-            if(result){
+            if (result) {
                 user.avatar.public_id = result.public_id;
                 user.avatar.secure_url = result.secure_url;
 
-                //  remove file from server
-                fs.rm(`uploads/${req.file.filename}`)
+                  // Remove file from server
+                  fs.rm(`uploads/${req.file.filename}`);
             }
         } catch (error) {
-            return next(
-                new AppError(error || 'file not uploaded, please try again',500)
-            )
+            return next(new AppError(error.message || 'File not uploaded, please try again', 500));
         }
     }
 
+    user.save()
     // Hide password
     user.password = undefined;
-
+    
     // Generate JWT token
     const token = await user.generateJWTToken();
 
