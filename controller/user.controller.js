@@ -2,6 +2,8 @@ import AppError from "../utils/error.util.js"
 import User from '../model/user.Model.js'
 import cloudinary from 'cloudinary'
 import fs from 'fs'
+import sendEmail from "../utils/sendEmail.js"
+// import sendEmail from "../utils/sendEmail.js"
 const cookieOption = {
     maxAge: 7*24*60*60*1000, 
     httpOnly: true,
@@ -126,4 +128,38 @@ const getUser = async (req,res) => {
     })
 }
 
-export {register,login,logout,getUser}
+const forgotPassword = async (req,res,next)=>{
+    const {email} = req.body;
+    if(!email){
+        return next(new AppError('email is required',400));
+    }
+
+    const user = await User.findOne({email})
+
+    if(!user){
+        return next(new AppError('email not register',400));
+    }
+
+    const resetToken = await user.generatePasswordResetToken();
+    await user.save();
+
+    const resetPasswordURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    console.log('resetPasswordURL = ',resetPasswordURL)
+    const subject = 'Reset password';
+    const message = `you can reset your password by clicking ${resetPasswordURL}`
+    try {
+        await sendEmail(email, subject, message)
+        res.status(200).json({
+            success: true,
+            message: `Reset password token has sent to ${email} successfully`
+        })
+    } catch (error) {
+        user.forgotPasswordExpiry = undefined;
+        user.forgotPasswordToken = undefined;
+        await user.save()
+        return next(new AppError(error.message,400));
+    }
+
+}
+const resetPassword = (re,res,next)=>{}
+export {register,login,logout,getUser, forgotPassword, resetPassword}
