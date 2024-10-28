@@ -13,6 +13,6 @@ userRouter.post('/login', login)
 userRouter.get('/logout', logout)
 userRouter.get('/getUser', isLoggedIn, getUser)
 userRouter.post('/reset', forgotPassword)
-userRouter.post('/reset/:resetId', resetPassword)
+userRouter.post('/reset/:resetToken', resetPassword)
 
 export default userRouter
