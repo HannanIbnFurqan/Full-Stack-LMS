@@ -3,10 +3,7 @@ import express from 'express'
 import { isLoggedIn } from '../middleWare/auth.middleware.js';
 const userRouter = express.Router();
 // import user controller from controller
-import { register } from '../controller/user.controller.js';
-import { login } from '../controller/user.controller.js';
-import { logout } from '../controller/user.controller.js';
-import { getUser } from '../controller/user.controller.js';
+import {login, logout, getUser, forgotPassword, register, resetPassword } from '../controller/user.controller.js';
 // multer middleWare
 import upload from '../middleWare/multer.middleware.js';
 
@@ -15,5 +12,7 @@ userRouter.post('/register',upload.single("avatar"), register)
 userRouter.post('/login', login)
 userRouter.get('/logout', logout)
 userRouter.get('/getUser', isLoggedIn, getUser)
+userRouter.post('/reset', forgotPassword)
+userRouter.post('/reset/:resetId', resetPassword)
 
 export default userRouter
