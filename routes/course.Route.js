@@ -1,8 +1,14 @@
 import express from 'express'
-import {getAllCourses, getLecturesByCoureId} from '../controller/course.controller.js'
+import {getAllCourses, getLecturesByCoureId, createCourse, updateCourse, removeCourse} from '../controller/course.controller.js'
+import { isLoggedIn } from '../middleWare/auth.middleware.js';
+import upload from '../middleWare/multer.middleware.js';
 const courseRoute = express.Router();
 
 courseRoute.get('/', getAllCourses)
-courseRoute.get('/:id', getLecturesByCoureId)
+courseRoute.post("/", upload.single('thumbnail'),createCourse)
+
+courseRoute.get('/:id', isLoggedIn, getLecturesByCoureId)
+courseRoute.put('/:id', updateCourse)
+courseRoute.delete('/:id', removeCourse)
 
 export default courseRoute
