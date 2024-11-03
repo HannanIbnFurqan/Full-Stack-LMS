@@ -9,6 +9,8 @@ import dotenv from 'dotenv'
 import bodyParser from 'body-parser';
 import cors from 'cors'
 import cloudinary from 'cloudinary'
+import Razorpay from 'razorpay';
+import paymentRouter from './routes/payment.Route.js';
 const app = express()
 dotenv.config()
 // middleWare 
@@ -24,12 +26,20 @@ cloudinary.v2.config({
     api_secret: process.env.api_secret // Click 'View API Keys' above to copy your API secret
 });
 
+// payment config
+export const razorpay = new Razorpay({
+    key_id:process.env.Razorpay_KEY_ID,
+    key_secret:process.env.Razorpay_SECRET
+})
+
 const PORT = process.env.PORT || 5000
 
 // user route
 app.use('/api/v1/user', userRoutes);
 // course route
 app.use('/api/v1/course', courseRoute);
+// payment route
+app.use('/api/v1/payment', paymentRouter);
 
 
 app.all('*',(req,res)=>{
