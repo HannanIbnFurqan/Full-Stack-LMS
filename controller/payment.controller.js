@@ -64,8 +64,26 @@ const verifySubscription = async (req,res)=>{
         message: 'Payment verified successfully'
     })
 }
-const cancelSubscription = (req,res)=>{
+const cancelSubscription = async (req,res)=>{
+   try {
+    const {id} = req.user
+    const user = await user.findById(id)
+    if(!user){
+        return next(new AppError('Unauthorized, please login'))
+     }
+     if(user.role === 'ADMIN'){
+      return next(new AppError('Admin cannot purchase a subscription', 400))
+  
+     }
 
+     const subscriptionId = user.subscription.id;
+     const subscription = await razorpay.subscriptions.cancel(subscriptionId)
+     user.subscription.status = subscription.status;
+
+     await user.save();
+   } catch (error) {
+     return next(new AppError(e.message, 500))
+   }
 }
 const allPayments = (req,res)=>{
 
