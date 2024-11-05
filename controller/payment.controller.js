@@ -1,6 +1,8 @@
+// import subscriptions from 'razorpay/dist/types/subscriptions.js';
 import  User from '../model/user.Model.js'
 import { razorpay } from '../server.js';
-import AppError from '../utils/error.util';
+import AppError from '../utils/error.util.js';
+import Payment from '../model/payment.model.js';
 
 const getRazorpayApiKey = (req,res,next)=>{
     res.status(200).json({
@@ -31,8 +33,36 @@ const buySubscription = async (req,res,next)=>{
 
    await user.save()
 }
-const verifySubscription = (req,res)=>{
+const verifySubscription = async (req,res)=>{
+    const {id} = req.user;
+    const {razorpay_payment_id , razorpay_signature, razorpay_subscription_id} = req.body;
 
+    const user = await User.findById(id);
+    if(!user){
+        return next(new AppError('Unauthorized, please login'))
+    }
+
+    const generatedSignature = crypto
+         .createHmac('sha256', process.env.RAZORPAY_SECRET)
+         .update(`${razorpay_payment_id}|${buySubscription}`)
+         .digest('hex');
+
+         if(generatedSignature !== razorpay_signature){
+            return next(new AppError('payment not verified, please try login',500))
+         }
+
+         await Payment.create({
+            razorpay_payment_id,
+            razorpay_signature,
+            razorpay_subscription_id
+         })
+    user.subscription.status = 'active';
+    await user.save();
+
+    res.status(200).json({
+        success:true,
+        message: 'Payment verified successfully'
+    })
 }
 const cancelSubscription = (req,res)=>{
 
