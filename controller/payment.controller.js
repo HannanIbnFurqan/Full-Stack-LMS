@@ -85,7 +85,18 @@ const cancelSubscription = async (req,res)=>{
      return next(new AppError(e.message, 500))
    }
 }
-const allPayments = (req,res)=>{
+const allPayments = async (req,res)=>{
+    const {count} = req.query;
+
+    const subscriptions = await razorpay.subscriptions.all({
+        count: count || 10,
+    });
+
+    res.status(200).json({
+        success:true,
+        message:'All Payments',
+        subscriptions
+    })
 
 }
 
