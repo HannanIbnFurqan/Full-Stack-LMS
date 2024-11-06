@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
+import { subscribe } from 'diagnostics_channel';
 const userSchema = mongoose.Schema({
     fullname: {
         type: String,
@@ -36,7 +37,11 @@ const userSchema = mongoose.Schema({
         default: 'user'
     },
     forgotPasswordToken: String,
-    forgotPasswordExpiry: Date
+    forgotPasswordExpiry: Date,
+    subscription:{
+        id: String,
+        status: String
+    }
 }, { timestamps: true }); // Corrected timestamps option
 
 

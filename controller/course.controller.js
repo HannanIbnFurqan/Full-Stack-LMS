@@ -2,7 +2,7 @@ import Course from "../model/course.Model.js"
 import AppError from "../utils/error.util.js";
 import fs from 'fs'
 import cloudinary from 'cloudinary'
-import path from 'path'
+// import path from 'path'
 const getAllCourses = async (req,res)=>{
    try {
     const Courses = await Course.find({}).select('-lectures');
@@ -185,4 +185,4 @@ await course.save()
   }
 }
 
-export {getAllCourses, getLecturesByCoureId, createCourse, updateCourse, removeCourse}
+export {getAllCourses, getLecturesByCoureId, createCourse, updateCourse, removeCourse, addLectureToCourseById}
