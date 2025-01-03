@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Environment variables
+.env
+
+# Debug and diagnostic files
+*.log
+*.out
+*.coverage
+
+# Coverage directory for test output
+coverage/
+
+# Built and cache directories
+dist/
+build/
+.cache/
+
+# Temp files
+*.tmp
+*.swp
+*.bak
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Error reports
+error-report.*.json
+
+# Lockfiles
+package-lock.json
+yarn.lock
+
+# Ignore uploaded images or files (if your backend stores user uploads locally)
+public/uploads/
+
+# Miscellaneous
+*.lock
