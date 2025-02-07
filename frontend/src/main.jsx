@@ -1,20 +1,18 @@
-import { StrictMode } from 'react'
-// import css
-import './index.css'
-// import 
-import App from './App.jsx'
-import { BrowserRouter } from 'react-router-dom'
-import { Toaster } from 'react-hot-toast'
-import { createRoot } from 'react-dom/client'
-import { Provider } from 'react-redux'
+import { StrictMode } from "react";
+import "./index.css";
+import App from "./App.jsx";
+import { BrowserRouter } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import { createRoot } from "react-dom/client";
+import { Provider } from "react-redux";
+import store from "./Redux/Store.js"; // Import the store
 
-// import components
-
-createRoot(document.getElementById('root')).render(
-  <Provider>
+// Render the application
+createRoot(document.getElementById("root")).render(
+  <Provider store={store}> {/* Pass store as a prop */}
     <BrowserRouter>
       <App />
-      <Toaster></Toaster>
+      <Toaster />
     </BrowserRouter>
   </Provider>
-)
+);
